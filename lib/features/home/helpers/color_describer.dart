@@ -8,25 +8,14 @@ String? describeColor(Color? color) {
     final saturation = hsl.saturation;
     final lightness = hsl.lightness;
 
-    debugPrint(hue.toString());
-    debugPrint(saturation.toString());
-    debugPrint(lightness.toString());
+    debugPrint('Hue: $hue');
+    debugPrint('Saturation: $saturation');
+    debugPrint('Lightness: $lightness');
 
     String baseColor;
 
-    if (lightness < 0.15) {
-      baseColor = 'black';
-    } else if (lightness > 0.85 && saturation < 0.2) {
-      baseColor = 'white';
-    } else if (saturation < 0.25) {
-      baseColor = 'gray';
-    } else if (hue >= 20 && hue < 40 && saturation > 0.4 && lightness < 0.5) {
-      baseColor = 'brown';
-    } else if (hue >= 30 && hue < 50 && saturation < 0.5 && lightness > 0.6) {
-      baseColor = 'beige';
-    } else if (hue >= 70 && hue < 95 && saturation < 0.5 && lightness > 0.4) {
-      baseColor = 'olive';
-    } else if (hue < 15 || hue >= 345) {
+    // Primeiro: identificar pela tonalidade
+    if (hue < 15 || hue >= 345) {
       baseColor = 'red';
     } else if (hue >= 15 && hue < 45) {
       baseColor = 'orange';
@@ -42,6 +31,22 @@ String? describeColor(Color? color) {
       baseColor = 'purple';
     } else {
       baseColor = 'pink';
+    }
+
+    // Depois: tratar extremos de brilho e saturação
+    if (lightness < 0.08) {
+      baseColor = 'black';
+    } else if (lightness > 0.92) {
+      baseColor = 'white';
+    } else if (saturation < 0.15) {
+      baseColor = 'gray';
+    } else {
+      // Se não caiu nos neutros, ajusta com light/dark
+      if (lightness < 0.3) {
+        baseColor = 'dark $baseColor';
+      } else if (lightness > 0.7) {
+        baseColor = 'light $baseColor';
+      }
     }
 
     final variations = [
