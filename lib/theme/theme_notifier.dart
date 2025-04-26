@@ -7,7 +7,7 @@ class ThemeNotifier extends ChangeNotifier {
   Color get seedColor => _seedColor;
 
   void updateColor(Color newColor) {
-    print('Updating seed color to: $newColor');
+    debugPrint('Updating seed color to: $newColor');
     _seedColor = newColor;
     notifyListeners();
   }

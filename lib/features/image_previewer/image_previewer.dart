@@ -147,7 +147,7 @@ class _ImagePreviewerState extends State<ImagePreviewer> {
                             child: const Icon(
                               Icons.circle_outlined,
                               size: 30,
-                              color: Colors.white,
+                              color: Colors.lightBlue,
                             ),
                           ),
                       ],
