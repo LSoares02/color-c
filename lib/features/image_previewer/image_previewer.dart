@@ -101,6 +101,8 @@ class _ImagePreviewerState extends State<ImagePreviewer> {
           return Column(
             children: [
               const Spacer(),
+              const Text('Tap to extract color'),
+              const Spacer(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: SizedBox(

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 Future<String?> fetchColorName(String hexColor) async {
@@ -15,9 +16,11 @@ Future<String?> fetchColorName(String hexColor) async {
       final data = jsonDecode(response.body);
       return data['name']['value'] as String?;
     } else {
-      return 'Failed to load color name';
+      debugPrint('Failed to load color name');
+      return '-';
     }
   } catch (e) {
-    return 'Error: $e';
+    debugPrint(e.toString());
+    return '-';
   }
 }

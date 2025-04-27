@@ -2,7 +2,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class InkSplashes extends StatefulWidget {
-  const InkSplashes({super.key});
+  final List<Color>? customColors;
+  final double? splashOpacity;
+  const InkSplashes({super.key, this.customColors, this.splashOpacity});
 
   @override
   State<InkSplashes> createState() => _InkSplashesState();
@@ -16,7 +18,7 @@ class _InkSplashesState extends State<InkSplashes>
   final Random _random = Random();
 
   bool _isFadingOut = false;
-  bool _floatingActive = true; // <- Controle do floating
+  bool _floatingActive = true;
 
   @override
   void initState() {
@@ -69,29 +71,31 @@ class _InkSplashesState extends State<InkSplashes>
 
   Future<void> _refreshBlots() async {
     _isFadingOut = true;
-    _floatingActive = false; // <- Pausa floating enquanto faz fade
+    _floatingActive = false;
 
     await _controller.reverse(); // Fade-out
 
     if (mounted) {
       setState(() {
-        _generateBlots(); // Gera novos splashes
+        _generateBlots(); // Novo set de manchas
       });
     }
 
     _isFadingOut = false;
     await _controller.forward(); // Fade-in
-
-    _floatingActive = true; // <- Retoma floating só depois do fade-in
+    _floatingActive = true;
   }
 
   void _generateBlots() {
     final theme = Theme.of(context);
-    final colors = [
+    final defaultColors = [
       theme.colorScheme.primary,
       theme.colorScheme.secondary,
       theme.colorScheme.tertiary,
     ];
+
+    final colors =
+        widget.customColors ?? defaultColors; // <- Prioriza as customizadas!
 
     final size = MediaQuery.of(context).size;
 
@@ -107,7 +111,9 @@ class _InkSplashesState extends State<InkSplashes>
         final diameter = _random.nextDouble() * 150 + 100;
         final top = _random.nextDouble() * (size.height - diameter);
         final left = _random.nextDouble() * (size.width - diameter);
-        final color = colors[i % colors.length].withValues(alpha: 0.3);
+        final color = colors[i % colors.length].withOpacity(
+          widget.splashOpacity ?? 0.3,
+        );
 
         final newSplash = _Splash(
           color: color,
@@ -127,8 +133,7 @@ class _InkSplashesState extends State<InkSplashes>
       }
     }
 
-    _splashes =
-        generated; // <- só atualiza a lista (sem precisar novo setState aqui)
+    _splashes = generated;
   }
 
   bool _overlaps(_Splash a, _Splash b) {

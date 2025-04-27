@@ -13,6 +13,7 @@ A proposta é simples: tire uma foto ou selecione uma imagem, toque em um ponto 
 - 🟩 **Visualização em tempo real** com cor de fundo, hexadecimal e nome da cor
 - 🌐 Integração com [The Color API](https://www.thecolorapi.com/) para identificação semântica da cor
 - 🎨 Adaptação automática do tema do app com base na cor detectada
+- 🎨 Geração de paletas complementares, análogas, triádicas e tetrádicas
 - 🧠 Pensado com acessibilidade e estética em mente
 
 # 🛠️ Tecnologias
@@ -54,10 +55,6 @@ A proposta é simples: tire uma foto ou selecione uma imagem, toque em um ponto 
 > 🧪 Testado em: Android API 35 (emulador), e iOS 18 (iPhone 12mini)
 
 # ✨ Próximas versões
-
-- 💥 Animação "bolha" com transição para tela de sugestões
-
-- 🎨 Geração de paletas complementares, análogas e triádicas
 
 - 📊 Histórico de cores salvas
 

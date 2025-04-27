@@ -5,6 +5,7 @@ import 'package:color_c/features/home/helpers/image_selector.dart';
 import 'package:color_c/features/home/widgets/headline.dart';
 import 'package:color_c/features/home/widgets/ink_splash.dart';
 import 'package:color_c/features/home/widgets/preview_container.dart';
+import 'package:color_c/features/info_page/info_page.dart';
 import 'package:color_c/theme/theme_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -35,6 +36,19 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(top: 20, right: 12),
+            child: IconButton(
+              icon: Icon(Icons.info_outline),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const InfoPage()),
+                );
+              },
+            ),
+          ),
+        ],
         centerTitle: true,
       ),
       body: Stack(
@@ -48,9 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 32),
                 const ColorCHeadline(key: ValueKey('headline')),
                 const SizedBox(height: 24),
-
                 ColorPreviewContainer(detectedColor: _detectedColor),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [

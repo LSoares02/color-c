@@ -25,7 +25,7 @@ class ColorPreviewContainerState extends State<ColorPreviewContainer> {
         final hexColor =
             widget.detectedColor!.value
                 .toRadixString(16)
-                .padLeft(8, '0')
+                .substring(2)
                 .toUpperCase();
         fetchColorName(hexColor).then((name) {
           if (mounted) {
@@ -65,7 +65,7 @@ class ColorPreviewContainerState extends State<ColorPreviewContainer> {
           // Animação da opacidade começando em 30%
           final fadeAnimation = CurvedAnimation(
             parent: animation,
-            curve: const Interval(0.3, 1.0, curve: curve),
+            curve: const Interval(0.8, 1.0, curve: curve),
           );
 
           return FadeTransition(opacity: fadeAnimation, child: child);
@@ -82,7 +82,7 @@ class ColorPreviewContainerState extends State<ColorPreviewContainer> {
         widget.detectedColor != null
             ? widget.detectedColor!.value
                 .toRadixString(16)
-                .padLeft(8, '0')
+                .substring(2)
                 .toUpperCase()
             : '-';
 
@@ -99,17 +99,34 @@ class ColorPreviewContainerState extends State<ColorPreviewContainer> {
             border: Border.all(color: theme.colorScheme.outline),
           ),
           alignment: Alignment.center,
-          child: Text(
-            _colorName != null
-                ? '$_colorName\n#$hexColor\n(${describeColor(widget.detectedColor)})'
-                : 'Color will appear here',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color:
-                  widget.detectedColor != null
-                      ? getTextColor(widget.detectedColor!)
-                      : theme.colorScheme.onSurfaceVariant,
-            ),
-            textAlign: TextAlign.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                _colorName != null
+                    ? '$_colorName\n#$hexColor\n(${describeColor(widget.detectedColor)})'
+                    : 'Color will appear here',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color:
+                      widget.detectedColor != null
+                          ? getTextColor(widget.detectedColor!)
+                          : theme.colorScheme.onSurfaceVariant,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 10),
+              Text(
+                _colorName != null ? 'Click for details' : '(Select an image)',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color:
+                      widget.detectedColor != null
+                          ? getTextColor(widget.detectedColor!)
+                          : theme.colorScheme.onSurfaceVariant,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
       ),
