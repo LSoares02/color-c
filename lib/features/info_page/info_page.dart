@@ -28,6 +28,7 @@ class InfoPage extends StatelessWidget {
         title: const Text('About'),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        centerTitle: true,
       ),
       body: Center(
         child: Padding(
