@@ -88,7 +88,6 @@ class ColorDetailsPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      BackButton(color: getTextColor(color)),
                       const SizedBox(height: 24),
                       Text(
                         colorApiName,
@@ -147,6 +146,7 @@ class ColorDetailsPage extends StatelessWidget {
                 ),
               ],
             ),
+            BackButton(color: getTextColor(color)),
           ],
         ),
       ),
