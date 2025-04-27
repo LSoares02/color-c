@@ -116,7 +116,7 @@ class ColorPreviewContainerState extends State<ColorPreviewContainer> {
               ),
               SizedBox(height: 10),
               Text(
-                _colorName != null ? 'Click for details' : '(Select an image)',
+                _colorName != null ? 'Tap for details' : '(Select an image)',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color:
