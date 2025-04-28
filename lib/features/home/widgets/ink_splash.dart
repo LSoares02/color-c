@@ -77,7 +77,7 @@ class _InkSplashesState extends State<InkSplashes>
 
     if (mounted) {
       setState(() {
-        _generateBlots(); // Novo set de manchas
+        _splashes = _generateBlots();
       });
     }
 
@@ -86,7 +86,7 @@ class _InkSplashesState extends State<InkSplashes>
     _floatingActive = true;
   }
 
-  void _generateBlots() {
+  List<_Splash> _generateBlots() {
     final theme = Theme.of(context);
     final defaultColors = [
       theme.colorScheme.primary,
@@ -133,7 +133,7 @@ class _InkSplashesState extends State<InkSplashes>
       }
     }
 
-    _splashes = generated;
+    return generated;
   }
 
   bool _overlaps(_Splash a, _Splash b) {
