@@ -1,39 +1,39 @@
 ---
 layout: default
-title: Política de Privacidade
+title: Privacy Policy
 ---
 
-# Política de Privacidade do Color C
+# Color C Privacy Policy
 
-**Última atualização:** 29 de abril de 2025
+**Last updated:** April 29, 2025
 
-# 1. Informações que coletamos
+# 1. Information We Collect
 
-O Color C **não coleta nem armazena dados pessoais** dos usuários.
+Color C **does not collect or store any personal data** from users.
 
-O aplicativo solicita acesso à **câmera** apenas para que o usuário possa tirar uma foto e identificar cores. A imagem permanece no dispositivo e não é enviada para servidores.
+The app requests access to the **camera** solely so users can take a picture and identify colors. The image remains on the device and is not sent to any servers.
 
-Quando o usuário seleciona um ponto da imagem para análise, o **valor hexadecimal da cor** extraído (ex: `#A1B2C3`) é enviado para uma API externa com o objetivo de obter o nome da cor e sugestões relacionadas (como cores complementares).
+When the user selects a point on the image for analysis, the **hexadecimal color value** extracted (e.g., `#A1B2C3`) is sent to an external API to retrieve the color name and related suggestions (such as complementary colors).
 
-# 2. Uso das informações
+# 2. Use of Information
 
-A única informação compartilhada externamente é o valor hexadecimal da cor selecionada pelo usuário. Essa informação **não é associada a nenhuma identidade pessoal** e serve exclusivamente para funcionalidades visuais dentro do aplicativo (ex: exibir o nome da cor e sugestões).
+The only information shared externally is the hexadecimal color value selected by the user. This information **is not associated with any personal identity** and is used exclusively for visual features within the app (e.g., displaying the color name and suggestions).
 
-# 3. Compartilhamento de informações
+# 3. Information Sharing
 
-O Color C **não compartilha informações pessoais** com terceiros. O valor da cor enviado à API externa **não pode ser usado para identificar o usuário**.
+Color C **does not share any personal information** with third parties. The color value sent to the external API **cannot be used to identify the user**.
 
-# 4. Permissões solicitadas
+# 4. Permissions Requested
 
-- **Câmera**: Para tirar fotos e identificar cores.
-- **Internet**: Para buscar dados de cores na API de nomes de cor.
+- **Camera**: To take photos and identify colors.
+- **Internet**: To fetch color data from the color naming API.
 
-# 5. Alterações nesta política
+# 5. Changes to This Policy
 
-Podemos atualizar esta Política de Privacidade de tempos em tempos. Notificações sobre alterações significativas serão exibidas no app ou em nossos canais oficiais.
+We may update this Privacy Policy from time to time. Notifications about significant changes will be displayed in the app or through our official channels.
 
-# 6. Contato
+# 6. Contact
 
-Em caso de dúvidas ou preocupações sobre esta política, entre em contato:
+If you have any questions or concerns about this policy, please contact:
 
-**E-mail:** lucashlsoares@gmail.com
+**Email:** lucashlsoares@gmail.com
