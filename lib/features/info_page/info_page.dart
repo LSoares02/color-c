@@ -5,17 +5,20 @@ class InfoPage extends StatelessWidget {
   const InfoPage({super.key});
 
   void _launchBuyMeACoffee() async {
-    const url =
-        'https://www.paypal.com/donate/?business=YSZR6LCJSUXYW&no_recurring=0&currency_code=BRL';
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
+    final Uri url = Uri.parse(
+      'https://www.paypal.com/donate/?business=YSZR6LCJSUXYW&no_recurring=0&currency_code=BRL',
+    );
+
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      debugPrint('Não foi possível abrir a URL: $url');
     }
   }
 
   void _launchGitHub() async {
-    const url = 'https://github.com/LSoares02/color-c';
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
+    final Uri url = Uri.parse('https://github.com/LSoares02/color-c');
+
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      debugPrint('Não foi possível abrir a URL: $url');
     }
   }
 

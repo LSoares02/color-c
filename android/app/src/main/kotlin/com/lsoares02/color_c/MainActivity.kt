@@ -1,4 +1,4 @@
-package com.example.color_c
+package com.lsoares02.color_c
 
 import io.flutter.embedding.android.FlutterActivity
 
