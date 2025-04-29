@@ -1,3 +1,8 @@
+---
+layout: default
+title: Política de Privacidade
+---
+
 # Política de Privacidade do Color C
 
 **Última atualização:** 29 de abril de 2025
