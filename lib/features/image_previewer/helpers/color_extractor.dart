@@ -1,4 +1,3 @@
-// lib/helpers/color_utils.dart
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';

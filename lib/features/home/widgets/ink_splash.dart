@@ -111,8 +111,8 @@ class _InkSplashesState extends State<InkSplashes>
         final diameter = _random.nextDouble() * 150 + 100;
         final top = _random.nextDouble() * (size.height - diameter);
         final left = _random.nextDouble() * (size.width - diameter);
-        final color = colors[i % colors.length].withOpacity(
-          widget.splashOpacity ?? 0.3,
+        final color = colors[i % colors.length].withValues(
+          alpha: widget.splashOpacity ?? 0.3,
         );
 
         final newSplash = _Splash(

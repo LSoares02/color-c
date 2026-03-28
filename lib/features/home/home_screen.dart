@@ -1,4 +1,3 @@
-// lib/features/home/home_screen.dart
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:color_c/features/home/helpers/image_selector.dart';
@@ -20,6 +19,44 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Color? _detectedColor;
+  bool _isPickingImage = false;
+
+  Future<void> _pickImage(ImageSource source) async {
+    if (_isPickingImage) return;
+    setState(() => _isPickingImage = true);
+
+    try {
+      final color = await handleImageSelection(context, source);
+      if (color != null) {
+        setState(() => _detectedColor = color);
+        context.read<ThemeNotifier>().updateColor(color);
+      }
+    } finally {
+      if (mounted) setState(() => _isPickingImage = false);
+    }
+  }
+
+  Widget _buildPickButton({
+    required ImageSource source,
+    required IconData icon,
+    required String label,
+  }) {
+    final theme = Theme.of(context);
+    return ElevatedButton.icon(
+      onPressed: _isPickingImage ? null : () => _pickImage(source),
+      icon: Icon(icon, color: theme.colorScheme.onPrimary),
+      label: Text(
+        label,
+        style: theme.textTheme.bodyMedium?.copyWith(
+          color: theme.colorScheme.onPrimary,
+        ),
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: theme.colorScheme.primary,
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 20, right: 12),
             child: IconButton(
-              icon: Icon(Icons.info_outline),
+              icon: const Icon(Icons.info_outline),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const InfoPage()),
@@ -67,77 +104,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     if (_detectedColor == null) ...[
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          final color = await handleImageSelection(
-                            context,
-                            ImageSource.camera,
-                          );
-                          if (color != null) {
-                            setState(() {
-                              _detectedColor = color;
-                            });
-                            context.read<ThemeNotifier>().updateColor(color);
-                          }
-                        },
-                        icon: Icon(
-                          Icons.camera_alt,
-                          color: theme.colorScheme.onPrimary,
-                        ),
-                        label: Text(
-                          'Camera',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onPrimary,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.primary,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 32,
-                            vertical: 16,
-                          ),
-                        ),
+                      _buildPickButton(
+                        source: ImageSource.camera,
+                        icon: Icons.camera_alt,
+                        label: 'Camera',
                       ),
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          final color = await handleImageSelection(
-                            context,
-                            ImageSource.gallery,
-                          );
-                          if (color != null) {
-                            setState(() {
-                              _detectedColor = color;
-                            });
-                            context.read<ThemeNotifier>().updateColor(color);
-                          }
-                        },
-                        icon: Icon(
-                          Icons.photo,
-                          color: theme.colorScheme.onPrimary,
-                        ),
-                        label: Text(
-                          'Upload',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onPrimary,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.primary,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 32,
-                            vertical: 16,
-                          ),
-                        ),
+                      _buildPickButton(
+                        source: ImageSource.gallery,
+                        icon: Icons.photo,
+                        label: 'Upload',
                       ),
                     ] else ...[
                       SizedBox(
                         width: 300,
                         child: ElevatedButton.icon(
                           onPressed: () {
-                            setState(() {
-                              _detectedColor = null;
-                            });
-                            // Reseta para a cor padrão do ThemeNotifier (ou defina sua lógica)
+                            setState(() => _detectedColor = null);
                             context.read<ThemeNotifier>().updateColor(
                               Colors.blue,
                             );
@@ -154,7 +136,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: theme.colorScheme.primary,
-
                             padding: const EdgeInsets.symmetric(
                               horizontal: 32,
                               vertical: 16,

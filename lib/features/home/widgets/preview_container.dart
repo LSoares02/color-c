@@ -1,8 +1,9 @@
-import 'package:color_c/features/home/helpers/color_describer.dart';
-import 'package:color_c/features/home/helpers/contrast_hadler.dart';
-import 'package:flutter/material.dart';
 import 'package:color_c/api/color_api.dart';
-import 'package:color_c/features/color_details/color_details.dart'; // Importa a nova tela
+import 'package:color_c/features/color_details/color_details.dart';
+import 'package:color_c/features/home/helpers/color_describer.dart';
+import 'package:color_c/features/home/helpers/contrast_handler.dart';
+import 'package:color_c/utils/color_utils.dart';
+import 'package:flutter/material.dart';
 
 class ColorPreviewContainer extends StatefulWidget {
   final Color? detectedColor;
@@ -22,11 +23,7 @@ class ColorPreviewContainerState extends State<ColorPreviewContainer> {
 
     if (widget.detectedColor != oldWidget.detectedColor) {
       if (widget.detectedColor != null) {
-        final hexColor =
-            widget.detectedColor!.value
-                .toRadixString(16)
-                .substring(2)
-                .toUpperCase();
+        final hexColor = colorToHex(widget.detectedColor!);
         fetchColorName(hexColor).then((name) {
           if (mounted) {
             setState(() {
@@ -79,12 +76,7 @@ class ColorPreviewContainerState extends State<ColorPreviewContainer> {
     final theme = Theme.of(context);
 
     final hexColor =
-        widget.detectedColor != null
-            ? widget.detectedColor!.value
-                .toRadixString(16)
-                .substring(2)
-                .toUpperCase()
-            : '-';
+        widget.detectedColor != null ? colorToHex(widget.detectedColor!) : '-';
 
     return GestureDetector(
       onTap: _navigateToColorDetails,

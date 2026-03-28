@@ -8,10 +8,6 @@ String? describeColor(Color? color) {
     final saturation = hsl.saturation;
     final lightness = hsl.lightness;
 
-    debugPrint('Hue: $hue');
-    debugPrint('Saturation: $saturation');
-    debugPrint('Lightness: $lightness');
-
     String baseColor;
 
     // Primeiro: identificar pela tonalidade

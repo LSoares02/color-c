@@ -6,6 +6,7 @@ import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:color_c/features/image_previewer/helpers/color_extractor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:photo_view/photo_view.dart';
 
 class ImagePreviewer extends StatefulWidget {
@@ -136,6 +137,7 @@ class _ImagePreviewerState extends State<ImagePreviewer> {
 
                             if (imageCoords == null) return;
 
+                            HapticFeedback.mediumImpact();
                             setState(() {
                               _tapOnViewer = localTap;
                               _tapOnImagePixels = imageCoords;

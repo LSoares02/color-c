@@ -1,7 +1,8 @@
 import 'package:color_c/api/color_api.dart';
 import 'package:color_c/features/color_details/helpers/consequent_colors.dart';
-import 'package:color_c/features/home/helpers/contrast_hadler.dart';
+import 'package:color_c/features/home/helpers/contrast_handler.dart';
 import 'package:color_c/features/home/widgets/ink_splash.dart';
+import 'package:color_c/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 
 class ColorDetailsPage extends StatefulWidget {
@@ -70,7 +71,7 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
       });
     } else {
       final schemeData = await fetchColorScheme(
-        widget.color.value.toRadixString(16).substring(2, 8),
+        colorToHex(widget.color),
         nextMode,
       );
 
@@ -108,12 +109,7 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final hex =
-        widget.color.value
-            .toRadixString(16)
-            .padLeft(8, '0')
-            .substring(2)
-            .toUpperCase();
+    final hex = colorToHex(widget.color);
 
     return Scaffold(
       backgroundColor: widget.color,
@@ -150,7 +146,7 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
             ),
             if (showDetails)
               InkSplashes(
-                key: ValueKey(schemeColors.map((e) => e.value).join('-')),
+                key: ValueKey(schemeColors.map((e) => e.toARGB32()).join('-')),
                 customColors: schemeColors,
                 splashOpacity: 1.0,
               ),
@@ -206,7 +202,7 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
                                       width: double.infinity,
                                       padding: const EdgeInsets.all(16),
                                       decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.3),
+                                        color: Colors.black.withValues(alpha: 0.3),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Column(
@@ -214,11 +210,7 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
                                             CrossAxisAlignment.start,
                                         children:
                                             schemeColors.map((color) {
-                                              final hexCode =
-                                                  color.value
-                                                      .toRadixString(16)
-                                                      .substring(2)
-                                                      .toUpperCase();
+                                              final hexCode = colorToHex(color);
                                               return Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
