@@ -6,6 +6,7 @@ import 'package:color_c/providers/saved_palettes_notifier.dart';
 import 'package:color_c/utils/color_utils.dart';
 import 'package:color_c/utils/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class ColorPreviewContainer extends StatefulWidget {
@@ -59,11 +60,13 @@ class ColorPreviewContainerState extends State<ColorPreviewContainer> {
 
     if (!mounted) return;
     if (name != null) {
+      HapticFeedback.heavyImpact();
       setState(() {
         _colorName = name;
         _isLoadingName = false;
       });
     } else {
+      HapticFeedback.vibrate();
       setState(() {
         _isLoadingName = false;
         _nameFetchFailed = true;

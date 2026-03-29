@@ -108,12 +108,14 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
                 ),
               )
               .toList();
+      HapticFeedback.lightImpact();
       setState(() {
         selectedScheme = 'monochrome';
         schemeColors = colorsFromApi;
         isLoadingScheme = false;
       });
     } else {
+      HapticFeedback.lightImpact();
       setState(() {
         selectedScheme = 'default';
         schemeColors = [
@@ -145,6 +147,7 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
     });
 
     if (nextMode == 'default') {
+      HapticFeedback.lightImpact();
       setState(() {
         selectedScheme = nextMode;
         schemeColors = [
@@ -171,6 +174,7 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
                 )
                 .toList();
 
+        HapticFeedback.lightImpact();
         setState(() {
           selectedScheme = nextMode;
           schemeColors = colorsFromApi;

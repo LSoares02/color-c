@@ -19,7 +19,7 @@ The concept is simple: take a photo or select an image, tap on a spot, and insta
 - 📋 **Copy hex code** with a single tap
 - 💾 **Save favourite palettes** with local persistence (up to 50) and quick access from the home screen
 - 📤 **Share palettes** — generates a 1:1 image with the palette and shares via the native share sheet, including a link to The Color API and Google Play
-- 🔔 **Haptic feedback** on color detection
+- 🔔 **Haptic feedback** on color detection, color name API response, and palette load
 - 🌐 **Network reliability**: timeout, loading states, auto-retry, and error toasts
 
 # 🛠️ Tech Stack
