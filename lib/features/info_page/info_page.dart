@@ -59,7 +59,16 @@ class InfoPage extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 28),
+              Text(
+                'Shake those bubbles! 🫧',
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontStyle: FontStyle.italic,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 32),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [

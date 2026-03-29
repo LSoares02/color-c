@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 
 class InkSplashes extends StatefulWidget {
   final List<Color>? customColors;
@@ -20,6 +22,11 @@ class _InkSplashesState extends State<InkSplashes>
   bool _isFadingOut = false;
   bool _floatingActive = true;
 
+  StreamSubscription<UserAccelerometerEvent>? _accelSub;
+  DateTime? _lastShake;
+  static const double _shakeThreshold = 12.0;
+  static const _shakeCooldown = Duration(seconds: 2);
+
   @override
   void initState() {
     super.initState();
@@ -28,11 +35,23 @@ class _InkSplashesState extends State<InkSplashes>
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
-
     _fadeAnimation = CurvedAnimation(
       parent: _controller,
       curve: Curves.easeInOut,
     );
+
+    _accelSub = userAccelerometerEventStream().listen((event) {
+      final mag = sqrt(
+        event.x * event.x + event.y * event.y + event.z * event.z,
+      );
+      final now = DateTime.now();
+      final cooledDown = _lastShake == null ||
+          now.difference(_lastShake!) >= _shakeCooldown;
+      if (mag >= _shakeThreshold && cooledDown) {
+        _lastShake = now;
+        _refreshBlots();
+      }
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _generateBlots();
@@ -47,15 +66,14 @@ class _InkSplashesState extends State<InkSplashes>
 
       if (mounted && !_isFadingOut && _floatingActive) {
         setState(() {
-          _splashes =
-              _splashes.map((splash) {
-                final dx = (_random.nextDouble() - 0.5) * 10;
-                final dy = (_random.nextDouble() - 0.5) * 10;
-                return splash.copyWith(
-                  top: splash.top + dy,
-                  left: splash.left + dx,
-                );
-              }).toList();
+          _splashes = _splashes.map((splash) {
+            final dx = (_random.nextDouble() - 0.5) * 10;
+            final dy = (_random.nextDouble() - 0.5) * 10;
+            return splash.copyWith(
+              top: splash.top + dy,
+              left: splash.left + dx,
+            );
+          }).toList();
         });
       }
 
@@ -73,16 +91,14 @@ class _InkSplashesState extends State<InkSplashes>
     _isFadingOut = true;
     _floatingActive = false;
 
-    await _controller.reverse(); // Fade-out
+    await _controller.reverse();
 
     if (mounted) {
-      setState(() {
-        _splashes = _generateBlots();
-      });
+      setState(() => _splashes = _generateBlots());
     }
 
     _isFadingOut = false;
-    await _controller.forward(); // Fade-in
+    await _controller.forward();
     _floatingActive = true;
   }
 
@@ -93,10 +109,7 @@ class _InkSplashesState extends State<InkSplashes>
       theme.colorScheme.secondary,
       theme.colorScheme.tertiary,
     ];
-
-    final colors =
-        widget.customColors ?? defaultColors; // <- Prioriza as customizadas!
-
+    final colors = widget.customColors ?? defaultColors;
     final size = MediaQuery.of(context).size;
 
     const int maxAttempts = 30;
@@ -123,12 +136,10 @@ class _InkSplashesState extends State<InkSplashes>
         );
 
         bool overlaps = generated.any((s) => _overlaps(s, newSplash));
-
         if (!overlaps) {
           generated.add(newSplash);
           placed = true;
         }
-
         attempts++;
       }
     }
@@ -139,8 +150,7 @@ class _InkSplashesState extends State<InkSplashes>
   bool _overlaps(_Splash a, _Splash b) {
     final centerA = Offset(a.left + a.diameter / 2, a.top + a.diameter / 2);
     final centerB = Offset(b.left + b.diameter / 2, b.top + b.diameter / 2);
-    final distance = (centerA - centerB).distance;
-    return distance < (a.diameter + b.diameter) / 2;
+    return (centerA - centerB).distance < (a.diameter + b.diameter) / 2;
   }
 
   @override
@@ -148,29 +158,29 @@ class _InkSplashesState extends State<InkSplashes>
     return FadeTransition(
       opacity: _fadeAnimation,
       child: Stack(
-        children:
-            _splashes.map((blot) {
-              return AnimatedPositioned(
-                duration: const Duration(seconds: 2),
-                curve: Curves.easeInOut,
-                top: blot.top,
-                left: blot.left,
-                child: Container(
-                  width: blot.diameter,
-                  height: blot.diameter,
-                  decoration: BoxDecoration(
-                    color: blot.color,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              );
-            }).toList(),
+        children: _splashes.map((blot) {
+          return AnimatedPositioned(
+            duration: const Duration(seconds: 2),
+            curve: Curves.easeInOut,
+            top: blot.top,
+            left: blot.left,
+            child: Container(
+              width: blot.diameter,
+              height: blot.diameter,
+              decoration: BoxDecoration(
+                color: blot.color,
+                shape: BoxShape.circle,
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
 
   @override
   void dispose() {
+    _accelSub?.cancel();
     _controller.dispose();
     super.dispose();
   }

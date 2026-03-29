@@ -20,6 +20,8 @@ A proposta é simples: tire uma foto ou selecione uma imagem, toque em um ponto 
 - 💾 **Salvar paletas favoritas** com persistência local (até 50 paletas) e acesso rápido pela tela inicial
 - 📤 **Compartilhar paletas** — gera uma imagem 1:1 com a paleta e envia via share sheet nativo, incluindo link para The Color API e Google Play
 - 🔔 **Feedback háptico** ao detectar uma cor, ao carregar o nome via API e ao exibir paletas complementares
+- 🫧 **Easter egg** — agite o aparelho para reposicionar as bolhas de fundo (dica misteriosa na página Sobre)
+- 📱 **Apenas retrato** (por ora) — evita overflow em modo paisagem até o layout ser refinado
 - 🌐 **Confiabilidade de rede**: timeout, estados de loading, retry automático e notificações de erro
 
 # 🛠️ Tecnologias
@@ -28,6 +30,7 @@ A proposta é simples: tire uma foto ou selecione uma imagem, toque em um ponto 
 - **Provider** para gerenciamento de estado
 - **shared_preferences** para persistência local de paletas
 - **share_plus** para compartilhamento nativo de imagens
+- **sensors_plus** para detecção de movimento (shake nas bolhas)
 - **Image Picker** + **Photo View**
 - **HTTP** para integração com APIs externas
 

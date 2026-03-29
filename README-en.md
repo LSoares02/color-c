@@ -20,6 +20,8 @@ The concept is simple: take a photo or select an image, tap on a spot, and insta
 - 💾 **Save favourite palettes** with local persistence (up to 50) and quick access from the home screen
 - 📤 **Share palettes** — generates a 1:1 image with the palette and shares via the native share sheet, including a link to The Color API and Google Play
 - 🔔 **Haptic feedback** on color detection, color name API response, and palette load
+- 🫧 **Easter egg** — shake the device to reshuffle the background bubbles (cryptic hint on the About screen)
+- 📱 **Portrait-only** (for now) — avoids landscape layout overflow until the UI is refined
 - 🌐 **Network reliability**: timeout, loading states, auto-retry, and error toasts
 
 # 🛠️ Tech Stack
@@ -28,6 +30,7 @@ The concept is simple: take a photo or select an image, tap on a spot, and insta
 - **Provider** for state management
 - **shared_preferences** for local palette persistence
 - **share_plus** for native image sharing
+- **sensors_plus** for motion detection (bubble shake)
 - **Image Picker** + **Photo View**
 - **HTTP** for external API integration
 
