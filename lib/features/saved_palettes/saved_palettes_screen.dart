@@ -4,11 +4,24 @@ import 'package:color_c/features/home/helpers/color_describer.dart'
 import 'package:color_c/features/saved_palettes/widgets/palette_card.dart';
 import 'package:color_c/models/saved_palette.dart';
 import 'package:color_c/providers/saved_palettes_notifier.dart';
+import 'package:color_c/utils/share_palette.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SavedPalettesScreen extends StatelessWidget {
   const SavedPalettesScreen({super.key});
+
+  void _share(BuildContext context, SavedPalette palette) {
+    sharePalette(
+      context,
+      baseColor: palette.baseColor,
+      colorApiName: palette.colorApiName,
+      colorPhrase: guessColorName(palette.baseColor),
+      colorProperties: colorProperties(palette.baseColor),
+      schemeColors: palette.schemeColors,
+      schemeName: palette.schemeName,
+    );
+  }
 
   Future<void> _openDetails(BuildContext context, SavedPalette palette) async {
     final color = await Navigator.of(context).push<Color?>(
@@ -66,6 +79,7 @@ class SavedPalettesScreen extends StatelessWidget {
                   palette: palette,
                   onTap: () => _openDetails(context, palette),
                   onDelete: () => notifier.remove(palette.id),
+                  onShare: () => _share(context, palette),
                 ),
               );
             },

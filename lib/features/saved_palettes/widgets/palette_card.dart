@@ -7,12 +7,14 @@ class PaletteCard extends StatelessWidget {
   final SavedPalette palette;
   final VoidCallback onTap;
   final VoidCallback onDelete;
+  final VoidCallback onShare;
 
   const PaletteCard({
     super.key,
     required this.palette,
     required this.onTap,
     required this.onDelete,
+    required this.onShare,
   });
 
   @override
@@ -58,6 +60,14 @@ class PaletteCard extends StatelessWidget {
                     ],
                   ),
                 ),
+                IconButton(
+                  onPressed: onShare,
+                  icon: Icon(Icons.share, color: textColor),
+                  tooltip: 'Share',
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+                const SizedBox(width: 8),
                 IconButton(
                   onPressed: onDelete,
                   icon: Icon(Icons.bookmark, color: textColor),

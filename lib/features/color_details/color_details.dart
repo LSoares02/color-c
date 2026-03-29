@@ -5,6 +5,7 @@ import 'package:color_c/features/home/widgets/ink_splash.dart';
 import 'package:color_c/models/saved_palette.dart';
 import 'package:color_c/providers/saved_palettes_notifier.dart';
 import 'package:color_c/utils/color_utils.dart';
+import 'package:color_c/utils/share_palette.dart';
 import 'package:color_c/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -246,27 +247,50 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 24),
+                      Text(
+                        widget.colorApiName,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: getTextColor(widget.color),
+                        ),
+                      ),
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Expanded(
-                            child: Text(
-                              widget.colorApiName,
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                color: getTextColor(widget.color),
-                              ),
+                          IconButton(
+                            onPressed: isLoadingScheme
+                                ? null
+                                : () => sharePalette(
+                                  context,
+                                  baseColor: widget.color,
+                                  colorApiName: widget.colorApiName,
+                                  colorPhrase: widget.colorPhrase,
+                                  colorProperties: widget.colorProperties,
+                                  schemeColors: schemeColors,
+                                  schemeName: selectedScheme,
+                                ),
+                            icon: Icon(
+                              Icons.share,
+                              color: getTextColor(widget.color),
                             ),
+                            tooltip: 'Share palette',
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
                           ),
+                          const SizedBox(width: 12),
                           Consumer<SavedPalettesNotifier>(
                             builder: (context, notifier, _) {
                               final saved = notifier.isSaved(_paletteId);
                               return IconButton(
                                 onPressed: _toggleSave,
                                 icon: Icon(
-                                  saved ? Icons.bookmark : Icons.bookmark_border,
+                                  saved
+                                      ? Icons.bookmark
+                                      : Icons.bookmark_border,
                                   color: getTextColor(widget.color),
                                 ),
-                                tooltip: saved ? 'Remove saved palette' : 'Save palette',
+                                tooltip: saved
+                                    ? 'Remove saved palette'
+                                    : 'Save palette',
                                 padding: EdgeInsets.zero,
                                 constraints: const BoxConstraints(),
                               );
@@ -355,7 +379,7 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
                                       ),
                                     ),
                                     Text(
-                                      'Tap to use',
+                                      'Tap a hex to select',
                                       style: theme.textTheme.bodySmall?.copyWith(
                                         color: getTextColor(widget.color).withValues(alpha: 0.5),
                                       ),
