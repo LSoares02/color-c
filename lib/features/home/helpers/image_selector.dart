@@ -20,6 +20,7 @@ Future<Color?> handleImageSelection(
 
     final imageFile = File(picked.path);
     clearToast(context);
+
     final Color? selectedColor = await Navigator.push<Color?>(
       context,
       MaterialPageRoute(builder: (_) => ImagePreviewer(imageFile: imageFile)),

@@ -9,6 +9,7 @@ The concept is simple: take a photo or select an image, tap on a spot, and insta
 # 🧪 Features
 
 - 📷 **Capture via camera** or **select from gallery**
+- 🎨 **Automatic dominant color extraction** — "Auto" tab on the preview screen extracts the 8 most prominent colors from the image in a background isolate, keeping the UI fully responsive
 - 🖱️ **Tap anywhere on the image** to detect the exact color
 - 🟩 **Live preview** with background color, hex code, and color name
 - 🌐 Integration with [The Color API](https://www.thecolorapi.com/) for semantic color naming

@@ -9,6 +9,7 @@ A proposta é simples: tire uma foto ou selecione uma imagem, toque em um ponto 
 # 🧪 Funcionalidades
 
 - 📷 **Captura via câmera** ou **seleção da galeria**
+- 🎨 **Extração automática de cores dominantes** — aba "Auto" na tela de preview extrai as 8 cores mais presentes na imagem em segundo plano, sem travar a UI
 - 🖱️ **Toque em qualquer ponto da imagem** para detectar a cor exata
 - 🟩 **Pré-visualização** com cor de fundo, hexadecimal e nome da cor
 - 🌐 Integração com [The Color API](https://www.thecolorapi.com/) para identificação semântica da cor
