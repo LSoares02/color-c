@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:color_c/features/image_previewer/helpers/color_extractor.dart';
 import 'package:flutter/material.dart';
@@ -81,112 +80,100 @@ class _ImagePreviewerState extends State<ImagePreviewer> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    if (_imageW == null || _imageH == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+    final ready = _imageW != null && _imageH != null && _uiImage != null;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Preview'), centerTitle: true),
-      body: LayoutBuilder(
-        builder: (ctx, bc) {
-          final totalH = bc.maxHeight;
-          const verticalPadding = 24.0 * 2;
-          const buttonArea = 56.0 + 50.0;
-          final availableH = totalH - verticalPadding - buttonArea;
+      body: Column(
+        children: [
+          const Spacer(),
+          const Text('Tap to extract color'),
+          const Spacer(),
+          Expanded(
+            flex: 8,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                clipBehavior: Clip.hardEdge,
+                child: Stack(
+                  children: [
+                    PhotoView(
+                      controller: _photoController,
+                      scaleStateController: _scaleStateCtrl,
+                      imageProvider: FileImage(widget.imageFile),
+                      backgroundDecoration: const BoxDecoration(
+                        color: Colors.black12,
+                      ),
+                      initialScale: PhotoViewComputedScale.contained,
+                      minScale: PhotoViewComputedScale.contained,
+                      maxScale: PhotoViewComputedScale.covered * 4.0,
+                      gestureDetectorBehavior: HitTestBehavior.translucent,
+                      onTapUp:
+                          ready
+                              ? (context, details, controllerValue) {
+                                final localTap = details.localPosition;
+                                final imageCoords =
+                                    convertTapToImageCoordinates(
+                                      context: context,
+                                      details: details,
+                                      controllerValue: controllerValue,
+                                      imageWidth: _imageW!,
+                                      imageHeight: _imageH!,
+                                    );
 
-          final containerW = bc.maxWidth - 24.0 * 2;
-          final idealH = containerW * (_imageH! / _imageW!);
-          final containerH = min(idealH, availableH);
+                                if (imageCoords == null) return;
 
-          return Column(
-            children: [
-              const Spacer(),
-              const Text('Tap to extract color'),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: SizedBox(
-                  height: containerH,
-                  width: double.infinity,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    clipBehavior: Clip.hardEdge,
-                    child: Stack(
-                      children: [
-                        PhotoView(
-                          controller: _photoController,
-                          scaleStateController: _scaleStateCtrl,
-                          imageProvider: FileImage(widget.imageFile),
-                          backgroundDecoration: const BoxDecoration(
-                            color: Colors.black12,
-                          ),
-                          initialScale: PhotoViewComputedScale.contained,
-                          minScale: PhotoViewComputedScale.contained,
-                          maxScale: PhotoViewComputedScale.covered * 4.0,
-                          gestureDetectorBehavior: HitTestBehavior.translucent,
-                          onTapUp: (context, details, controllerValue) {
-                            final localTap = details.localPosition;
-                            final imageCoords = convertTapToImageCoordinates(
-                              context: context,
-                              details: details,
-                              controllerValue: controllerValue,
-                              imageWidth: _imageW!,
-                              imageHeight: _imageH!,
-                            );
-
-                            if (imageCoords == null) return;
-
-                            HapticFeedback.mediumImpact();
-                            setState(() {
-                              _tapOnViewer = localTap;
-                              _tapOnImagePixels = imageCoords;
-                            });
-                          },
-                        ),
-                        if (_tapOnViewer != null)
-                          Positioned(
-                            left: _tapOnViewer!.dx - 15,
-                            top: _tapOnViewer!.dy - 15,
-                            child: const Icon(
-                              Icons.circle_outlined,
-                              size: 30,
-                              color: Colors.lightBlue,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 50.0),
-                child: ElevatedButton.icon(
-                  onPressed: _tapOnImagePixels != null ? _extractColor : null,
-                  icon: const Icon(Icons.remove_red_eye),
-                  label: Text(
-                    'See Color',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color:
-                          _tapOnImagePixels != null
-                              ? theme.colorScheme.onPrimary
+                                HapticFeedback.mediumImpact();
+                                setState(() {
+                                  _tapOnViewer = localTap;
+                                  _tapOnImagePixels = imageCoords;
+                                });
+                              }
                               : null,
                     ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: theme.colorScheme.onPrimary,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 16,
-                    ),
-                  ),
+                    if (_tapOnViewer != null)
+                      Positioned(
+                        left: _tapOnViewer!.dx - 15,
+                        top: _tapOnViewer!.dy - 15,
+                        child: const Icon(
+                          Icons.circle_outlined,
+                          size: 30,
+                          color: Colors.lightBlue,
+                        ),
+                      ),
+                  ],
                 ),
               ),
-            ],
-          );
-        },
+            ),
+          ),
+          const Spacer(),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 50.0),
+            child: ElevatedButton.icon(
+              onPressed:
+                  ready && _tapOnImagePixels != null ? _extractColor : null,
+              icon: const Icon(Icons.remove_red_eye),
+              label: Text(
+                'See Color',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color:
+                      _tapOnImagePixels != null
+                          ? theme.colorScheme.onPrimary
+                          : null,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: theme.colorScheme.onPrimary,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

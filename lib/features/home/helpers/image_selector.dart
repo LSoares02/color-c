@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:color_c/features/image_previewer/image_previewer.dart';
+import 'package:color_c/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -18,6 +19,7 @@ Future<Color?> handleImageSelection(
     if (picked == null) return null;
 
     final imageFile = File(picked.path);
+    clearToast(context);
     final Color? selectedColor = await Navigator.push<Color?>(
       context,
       MaterialPageRoute(builder: (_) => ImagePreviewer(imageFile: imageFile)),

@@ -3,7 +3,9 @@ import 'package:color_c/features/color_details/helpers/consequent_colors.dart';
 import 'package:color_c/features/home/helpers/contrast_handler.dart';
 import 'package:color_c/features/home/widgets/ink_splash.dart';
 import 'package:color_c/utils/color_utils.dart';
+import 'package:color_c/utils/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ColorDetailsPage extends StatefulWidget {
   final Color color;
@@ -28,6 +30,11 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
   String selectedScheme = 'default';
   List<Color> schemeColors = [];
   bool isLoadingScheme = false;
+
+  void _copyHex(String hex) {
+    Clipboard.setData(ClipboardData(text: '#$hex'));
+    showToast(context, message: 'Copied #$hex');
+  }
 
   @override
   void initState() {
@@ -91,7 +98,6 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
           isLoadingScheme = false;
         });
       } else {
-        // Se a API falhar, use as cores locais
         setState(() {
           selectedScheme = 'default';
           schemeColors = [
@@ -102,6 +108,9 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
           ];
           isLoadingScheme = false;
         });
+        if (mounted) {
+          showToast(context, message: 'Could not load scheme — showing local palette');
+        }
       }
     }
   }
@@ -166,11 +175,13 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      Text(
-                        '#$hex',
+                      _CopyableHex(
+                        hex: hex,
+                        onCopy: () => _copyHex(hex),
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: getTextColor(widget.color),
                         ),
+                        iconColor: getTextColor(widget.color),
                       ),
                       Text(
                         '(${widget.colorDescripion})',
@@ -211,22 +222,18 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
                                         children:
                                             schemeColors.map((color) {
                                               final hexCode = colorToHex(color);
-                                              return Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      vertical: 2,
+                                              return GestureDetector(
+                                                onTap: () => Navigator.of(context).pop(color),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.symmetric(vertical: 2),
+                                                  child: Text(
+                                                    '#$hexCode',
+                                                    style: theme.textTheme.titleLarge?.copyWith(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 18,
+                                                      color: color,
                                                     ),
-                                                child: Text(
-                                                  '#$hexCode',
-                                                  style: theme
-                                                      .textTheme
-                                                      .titleLarge
-                                                      ?.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 18,
-                                                        color: color,
-                                                      ),
+                                                  ),
                                                 ),
                                               );
                                             }).toList(),
@@ -235,10 +242,15 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
                                     const SizedBox(height: 10),
                                     Text(
                                       selectedScheme.toUpperCase(),
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
-                                            color: getTextColor(widget.color),
-                                          ),
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        color: getTextColor(widget.color),
+                                      ),
+                                    ),
+                                    Text(
+                                      'Tap to use',
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        color: getTextColor(widget.color).withValues(alpha: 0.5),
+                                      ),
                                     ),
                                   ],
                                 )
@@ -332,6 +344,39 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
             BackButton(color: getTextColor(widget.color)),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _CopyableHex extends StatelessWidget {
+  final String hex;
+  final VoidCallback onCopy;
+  final TextStyle? style;
+  final Color iconColor;
+
+  const _CopyableHex({
+    required this.hex,
+    required this.onCopy,
+    required this.iconColor,
+    this.style,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onCopy,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('#$hex', style: style),
+          const SizedBox(width: 6),
+          Icon(
+            Icons.content_copy,
+            size: 14,
+            color: iconColor.withValues(alpha: 0.6),
+          ),
+        ],
       ),
     );
   }

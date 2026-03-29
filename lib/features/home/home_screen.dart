@@ -99,7 +99,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 32),
                 const ColorCHeadline(key: ValueKey('headline')),
                 const SizedBox(height: 24),
-                ColorPreviewContainer(detectedColor: _detectedColor),
+                ColorPreviewContainer(
+                  detectedColor: _detectedColor,
+                  onEmptyTap: () => _pickImage(ImageSource.gallery),
+                  onColorSelected: (color) {
+                    setState(() => _detectedColor = color);
+                    context.read<ThemeNotifier>().updateColor(color);
+                  },
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
