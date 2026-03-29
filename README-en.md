@@ -17,6 +17,7 @@ The concept is simple: take a photo or select an image, tap on a spot, and insta
 - 🧠 **Perceptual color description** ("looks like purple", "warm · vivid · medium") — accessible for color blind users
 - 📋 **Copy hex code** with a single tap
 - 💾 **Save favourite palettes** with local persistence (up to 50) and quick access from the home screen
+- 📤 **Share palettes** — generates a 1:1 image with the palette and shares via the native share sheet, including a link to The Color API and Google Play
 - 🔔 **Haptic feedback** on color detection
 - 🌐 **Network reliability**: timeout, loading states, auto-retry, and error toasts
 
@@ -25,6 +26,7 @@ The concept is simple: take a photo or select an image, tap on a spot, and insta
 - **Flutter** / **Material 3**
 - **Provider** for state management
 - **shared_preferences** for local palette persistence
+- **share_plus** for native image sharing
 - **Image Picker** + **Photo View**
 - **HTTP** for external API integration
 

@@ -17,6 +17,7 @@ A proposta é simples: tire uma foto ou selecione uma imagem, toque em um ponto 
 - 🧠 **Descrição perceptual da cor** ("parece roxo", "quente · vívido · médio") — acessível para daltônicos
 - 📋 **Copiar hexadecimal** com um toque no código da cor
 - 💾 **Salvar paletas favoritas** com persistência local (até 50 paletas) e acesso rápido pela tela inicial
+- 📤 **Compartilhar paletas** — gera uma imagem 1:1 com a paleta e envia via share sheet nativo, incluindo link para The Color API e Google Play
 - 🔔 **Feedback háptico** ao detectar uma cor
 - 🌐 **Confiabilidade de rede**: timeout, estados de loading, retry automático e notificações de erro
 
@@ -25,6 +26,7 @@ A proposta é simples: tire uma foto ou selecione uma imagem, toque em um ponto 
 - **Flutter** / **Material 3**
 - **Provider** para gerenciamento de estado
 - **shared_preferences** para persistência local de paletas
+- **share_plus** para compartilhamento nativo de imagens
 - **Image Picker** + **Photo View**
 - **HTTP** para integração com APIs externas
 
