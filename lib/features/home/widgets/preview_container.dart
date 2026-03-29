@@ -1,6 +1,6 @@
 import 'package:color_c/api/color_api.dart';
 import 'package:color_c/features/color_details/color_details.dart';
-import 'package:color_c/features/home/helpers/color_describer.dart';
+import 'package:color_c/features/home/helpers/color_describer.dart' show guessColorName, colorProperties;
 import 'package:color_c/features/home/helpers/contrast_handler.dart';
 import 'package:color_c/utils/color_utils.dart';
 import 'package:color_c/utils/toast.dart';
@@ -89,7 +89,8 @@ class ColorPreviewContainerState extends State<ColorPreviewContainer> {
           return ColorDetailsPage(
             color: widget.detectedColor!,
             colorApiName: _colorName ?? colorToHex(widget.detectedColor!),
-            colorDescripion: describeColor(widget.detectedColor) ?? 'Unknown',
+            colorPhrase: guessColorName(widget.detectedColor!),
+            colorProperties: colorProperties(widget.detectedColor),
             pageAnimation: animation,
           );
         },
@@ -139,6 +140,19 @@ class ColorPreviewContainerState extends State<ColorPreviewContainer> {
     );
   }
 
+  Widget _buildDescriptionWidget(ThemeData theme, Color textColor) {
+    final color = widget.detectedColor;
+    if (color == null) return const SizedBox.shrink();
+    return Text(
+      guessColorName(color),
+      style: theme.textTheme.bodySmall?.copyWith(
+        color: textColor,
+        fontStyle: FontStyle.italic,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
   Widget _buildContent(ThemeData theme, String hexColor, Color textColor) {
     if (widget.detectedColor == null) {
       return _buildPlaceholder(theme);
@@ -162,14 +176,18 @@ class ColorPreviewContainerState extends State<ColorPreviewContainer> {
           Text(
             '#$hexColor',
             style: theme.textTheme.bodyMedium?.copyWith(color: textColor),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
+          _buildDescriptionWidget(theme, textColor),
+          const SizedBox(height: 10),
           Text(
             'Tap for details',
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: textColor,
             ),
+            textAlign: TextAlign.center,
           ),
         ],
       );
@@ -179,10 +197,12 @@ class ColorPreviewContainerState extends State<ColorPreviewContainer> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          '$_colorName\n#$hexColor\n(${describeColor(widget.detectedColor)})',
+          '$_colorName\n#$hexColor',
           style: theme.textTheme.bodyMedium?.copyWith(color: textColor),
           textAlign: TextAlign.center,
         ),
+        const SizedBox(height: 4),
+        _buildDescriptionWidget(theme, textColor),
         const SizedBox(height: 10),
         Text(
           'Tap for details',

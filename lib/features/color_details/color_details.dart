@@ -10,14 +10,16 @@ import 'package:flutter/services.dart';
 class ColorDetailsPage extends StatefulWidget {
   final Color color;
   final String colorApiName;
-  final String colorDescripion;
+  final String colorPhrase;
+  final String? colorProperties;
   final Animation<double>? pageAnimation;
 
   const ColorDetailsPage({
     super.key,
     required this.color,
     required this.colorApiName,
-    required this.colorDescripion,
+    required this.colorPhrase,
+    this.colorProperties,
     this.pageAnimation,
   });
 
@@ -184,11 +186,19 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
                         iconColor: getTextColor(widget.color),
                       ),
                       Text(
-                        '(${widget.colorDescripion})',
+                        widget.colorPhrase,
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: getTextColor(widget.color),
+                          fontStyle: FontStyle.italic,
                         ),
                       ),
+                      if (widget.colorProperties != null)
+                        Text(
+                          '(${widget.colorProperties})',
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: getTextColor(widget.color),
+                          ),
+                        ),
                     ],
                   ),
                 ),
