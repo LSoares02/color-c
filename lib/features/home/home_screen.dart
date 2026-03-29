@@ -5,6 +5,8 @@ import 'package:color_c/features/home/widgets/headline.dart';
 import 'package:color_c/features/home/widgets/ink_splash.dart';
 import 'package:color_c/features/home/widgets/preview_container.dart';
 import 'package:color_c/features/info_page/info_page.dart';
+import 'package:color_c/features/saved_palettes/saved_palettes_screen.dart';
+import 'package:color_c/providers/saved_palettes_notifier.dart';
 import 'package:color_c/theme/theme_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,6 +22,16 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Color? _detectedColor;
   bool _isPickingImage = false;
+
+  Future<void> _openSavedPalettes() async {
+    final color = await Navigator.of(context).push<Color?>(
+      MaterialPageRoute(builder: (_) => const SavedPalettesScreen()),
+    );
+    if (color != null && mounted) {
+      setState(() => _detectedColor = color);
+      context.read<ThemeNotifier>().updateColor(color);
+    }
+  }
 
   Future<void> _pickImage(ImageSource source) async {
     if (_isPickingImage) return;
@@ -92,65 +104,88 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const InkSplashes(),
           Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 const SizedBox(height: 32),
                 const ColorCHeadline(key: ValueKey('headline')),
                 const SizedBox(height: 24),
-                ColorPreviewContainer(
-                  detectedColor: _detectedColor,
-                  onEmptyTap: () => _pickImage(ImageSource.gallery),
-                  onColorSelected: (color) {
-                    setState(() => _detectedColor = color);
-                    context.read<ThemeNotifier>().updateColor(color);
-                  },
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                Column(
                   children: [
-                    if (_detectedColor == null) ...[
-                      _buildPickButton(
-                        source: ImageSource.camera,
-                        icon: Icons.camera_alt,
-                        label: 'Camera',
-                      ),
-                      _buildPickButton(
-                        source: ImageSource.gallery,
-                        icon: Icons.photo,
-                        label: 'Upload',
-                      ),
-                    ] else ...[
-                      SizedBox(
-                        width: 300,
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            setState(() => _detectedColor = null);
-                            context.read<ThemeNotifier>().updateColor(
-                              Colors.blue,
-                            );
-                          },
+                    ColorPreviewContainer(
+                      detectedColor: _detectedColor,
+                      onEmptyTap: () => _pickImage(ImageSource.gallery),
+                      onColorSelected: (color) {
+                        setState(() => _detectedColor = color);
+                        context.read<ThemeNotifier>().updateColor(color);
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        if (_detectedColor == null) ...[
+                          _buildPickButton(
+                            source: ImageSource.camera,
+                            icon: Icons.camera_alt,
+                            label: 'Camera',
+                          ),
+                          _buildPickButton(
+                            source: ImageSource.gallery,
+                            icon: Icons.photo,
+                            label: 'Upload',
+                          ),
+                        ] else ...[
+                          SizedBox(
+                            width: 300,
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                setState(() => _detectedColor = null);
+                                context.read<ThemeNotifier>().updateColor(
+                                  Colors.blue,
+                                );
+                              },
+                              icon: Icon(
+                                Icons.clear,
+                                color: theme.colorScheme.onPrimary,
+                              ),
+                              label: Text(
+                                'Clear',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: theme.colorScheme.onPrimary,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: theme.colorScheme.primary,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 32,
+                                  vertical: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Consumer<SavedPalettesNotifier>(
+                      builder: (context, notifier, _) {
+                        final count = notifier.palettes.length;
+                        return TextButton.icon(
+                          onPressed: _openSavedPalettes,
                           icon: Icon(
-                            Icons.clear,
-                            color: theme.colorScheme.onPrimary,
+                            count > 0 ? Icons.bookmark : Icons.bookmark_border,
+                            size: 20,
                           ),
                           label: Text(
-                            'Clear',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onPrimary,
-                            ),
+                            count > 0
+                                ? 'Saved palettes ($count)'
+                                : 'Saved palettes',
                           ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: theme.colorScheme.primary,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 32,
-                              vertical: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                        );
+                      },
+                    ),
                   ],
                 ),
               ],

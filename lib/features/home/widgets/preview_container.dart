@@ -2,9 +2,11 @@ import 'package:color_c/api/color_api.dart';
 import 'package:color_c/features/color_details/color_details.dart';
 import 'package:color_c/features/home/helpers/color_describer.dart' show guessColorName, colorProperties;
 import 'package:color_c/features/home/helpers/contrast_handler.dart';
+import 'package:color_c/providers/saved_palettes_notifier.dart';
 import 'package:color_c/utils/color_utils.dart';
 import 'package:color_c/utils/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ColorPreviewContainer extends StatefulWidget {
   final Color? detectedColor;
@@ -125,16 +127,51 @@ class ColorPreviewContainerState extends State<ColorPreviewContainer> {
       onTap: _navigateToColorDetails,
       child: Hero(
         tag: 'colorPreviewHero',
-        child: Container(
-          width: double.infinity,
-          height: 150,
-          decoration: BoxDecoration(
-            color: widget.detectedColor ?? theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: theme.colorScheme.outline),
-          ),
-          alignment: Alignment.center,
-          child: _buildContent(theme, hexColor, textColor),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              width: double.infinity,
+              height: 150,
+              decoration: BoxDecoration(
+                color: widget.detectedColor ?? theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: theme.colorScheme.outline),
+              ),
+              alignment: Alignment.center,
+              child: _buildContent(theme, hexColor, textColor),
+            ),
+            if (widget.detectedColor != null)
+              Consumer<SavedPalettesNotifier>(
+                builder: (context, notifier, _) {
+                  final currentHex = colorToHex(widget.detectedColor!);
+                  final hasSaved = notifier.palettes.any(
+                    (p) => colorToHex(p.baseColor) == currentHex,
+                  );
+                  if (!hasSaved) return const SizedBox.shrink();
+                  return Positioned(
+                    top: -10,
+                    right: -10,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: theme.colorScheme.surface,
+                          width: 2,
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.bookmark,
+                        size: 14,
+                        color: theme.colorScheme.onPrimary,
+                      ),
+                    ),
+                  );
+                },
+              ),
+          ],
         ),
       ),
     );

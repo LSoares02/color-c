@@ -2,10 +2,13 @@ import 'package:color_c/api/color_api.dart';
 import 'package:color_c/features/color_details/helpers/consequent_colors.dart';
 import 'package:color_c/features/home/helpers/contrast_handler.dart';
 import 'package:color_c/features/home/widgets/ink_splash.dart';
+import 'package:color_c/models/saved_palette.dart';
+import 'package:color_c/providers/saved_palettes_notifier.dart';
 import 'package:color_c/utils/color_utils.dart';
 import 'package:color_c/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class ColorDetailsPage extends StatefulWidget {
   final Color color;
@@ -13,6 +16,8 @@ class ColorDetailsPage extends StatefulWidget {
   final String colorPhrase;
   final String? colorProperties;
   final Animation<double>? pageAnimation;
+  final String? initialScheme;
+  final List<Color>? initialSchemeColors;
 
   const ColorDetailsPage({
     super.key,
@@ -21,6 +26,8 @@ class ColorDetailsPage extends StatefulWidget {
     required this.colorPhrase,
     this.colorProperties,
     this.pageAnimation,
+    this.initialScheme,
+    this.initialSchemeColors,
   });
 
   @override
@@ -33,31 +40,100 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
   List<Color> schemeColors = [];
   bool isLoadingScheme = false;
 
+  String get _paletteId => '${colorToHex(widget.color)}_$selectedScheme';
+
   void _copyHex(String hex) {
     Clipboard.setData(ClipboardData(text: '#$hex'));
     showToast(context, message: 'Copied #$hex');
   }
 
+  void _toggleSave() {
+    final notifier = context.read<SavedPalettesNotifier>();
+    final id = _paletteId;
+    if (notifier.isSaved(id)) {
+      notifier.remove(id);
+      showToast(context, message: 'Palette removed');
+    } else {
+      final argb = widget.color.toARGB32();
+      final opaqueBase = Color.fromARGB(
+        255,
+        (argb >> 16) & 0xFF,
+        (argb >> 8) & 0xFF,
+        argb & 0xFF,
+      );
+      notifier.add(
+        SavedPalette(
+          id: id,
+          baseColor: opaqueBase,
+          colorApiName: widget.colorApiName,
+          schemeName: selectedScheme,
+          schemeColors: List.of(schemeColors),
+          savedAt: DateTime.now(),
+        ),
+      );
+      showToast(context, message: 'Palette saved');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    // Inicializa com as cores locais
-    schemeColors = [
-      getComplementaryColor(widget.color),
-      getAnalogousColor(widget.color),
-      getTriadicColor(widget.color),
-      getTetradicColor(widget.color),
-    ];
+    _initScheme();
+  }
+
+  Future<void> _initScheme() async {
+    if (widget.initialScheme != null && widget.initialSchemeColors != null) {
+      setState(() {
+        selectedScheme = widget.initialScheme!;
+        schemeColors = widget.initialSchemeColors!;
+        isLoadingScheme = false;
+        showDetails = true;
+      });
+      return;
+    }
+
+    setState(() => isLoadingScheme = true);
+
+    final schemeData = await fetchColorScheme(colorToHex(widget.color), 'monochrome');
+
+    if (!mounted) return;
+
+    if (schemeData != null) {
+      final colorsFromApi =
+          (schemeData['colors'] as List)
+              .map(
+                (item) => Color(
+                  int.parse(item['hex']['clean'], radix: 16) + 0xFF000000,
+                ),
+              )
+              .toList();
+      setState(() {
+        selectedScheme = 'monochrome';
+        schemeColors = colorsFromApi;
+        isLoadingScheme = false;
+      });
+    } else {
+      setState(() {
+        selectedScheme = 'default';
+        schemeColors = [
+          getComplementaryColor(widget.color),
+          getAnalogousColor(widget.color),
+          getTriadicColor(widget.color),
+          getTetradicColor(widget.color),
+        ];
+        isLoadingScheme = false;
+      });
+    }
   }
 
   void _changeScheme() async {
     final modes = [
-      'default',
       'monochrome',
       'analogic',
       'complement',
       'triad',
       'quad',
+      'default',
     ];
     final currentIndex = modes.indexOf(selectedScheme);
     final nextIndex = (currentIndex + 1) % modes.length;
@@ -170,11 +246,33 @@ class _ColorDetailsPageState extends State<ColorDetailsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 24),
-                      Text(
-                        widget.colorApiName,
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          color: getTextColor(widget.color),
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              widget.colorApiName,
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                color: getTextColor(widget.color),
+                              ),
+                            ),
+                          ),
+                          Consumer<SavedPalettesNotifier>(
+                            builder: (context, notifier, _) {
+                              final saved = notifier.isSaved(_paletteId);
+                              return IconButton(
+                                onPressed: _toggleSave,
+                                icon: Icon(
+                                  saved ? Icons.bookmark : Icons.bookmark_border,
+                                  color: getTextColor(widget.color),
+                                ),
+                                tooltip: saved ? 'Remove saved palette' : 'Save palette',
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 12),
                       _CopyableHex(
@@ -376,6 +474,7 @@ class _CopyableHex extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onCopy,
+      behavior: HitTestBehavior.opaque,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
